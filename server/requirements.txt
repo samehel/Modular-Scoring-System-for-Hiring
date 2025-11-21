@@ -1,0 +1,19 @@
+# Core Django
+Django==4.2.10  
+
+# MongoDB Integration
+mongoengine==0.29.0  
+pymongo==4.6.1  
+
+# Security
+django-cors-headers==4.3.1  
+django-ratelimit==4.1.0  
+django-axes==7.0.1  
+django-user-agents==0.4.0  
+
+# Environment Management
+python-dotenv==1.0.0
+django-environ==0.11.2
+
+# REST Framework
+djangorestframework==3.14.0  
