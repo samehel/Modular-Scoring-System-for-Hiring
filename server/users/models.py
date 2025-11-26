@@ -1,7 +1,7 @@
 from datetime import datetime
 from mongoengine import *
 
-from server.users.domain.value_objects.user_type import UserType
+from users.domain.value_objects.user_type import UserType
 
 # Create your models here.
 

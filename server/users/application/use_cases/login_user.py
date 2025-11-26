@@ -4,8 +4,8 @@ import environ
 import os
 import jwt
 
-from server.users.application.dtos.login_dto import LoginDto
-from server.users.domain.interfaces.user_repository import UserRepository
+from users.application.dtos.login_dto import LoginDto
+from users.domain.interfaces.user_repository import UserRepository
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -24,14 +24,14 @@ class LoginUserUseCase():
         user = self.user_repository.find_by_email(dto.email)
 
         # Check if the user exists and if the credentials entered are correct
-        if not user or not bcrypt.checkpw(dto.password.encode('utf-8'), user.password_hash):
+        if not user or not bcrypt.checkpw(dto.password.encode('utf-8'), user.password_hash.encode('utf-8')):
             raise ValueError("Invalid credentials")
         
         expire = datetime.now() + timedelta(minutes=int(env("JWT_EXPIRE_MINUTES")))
-        token = jwt.encode({ "sub": user.email, "exp": expire }, env("JWT_SECRET"), algorithm=env("JWT_ALGO"))
+        token = jwt.encode({ "sub": user.email.value, "exp": expire }, env("JWT_SECRET"), algorithm=env("JWT_ALGO"))
 
         return { 
             "token": token,
             "user_type": user.user_type.value,
-            "user_id": user.id
+            "max_age": env("JWT_EXPIRE_MINUTES")
         }

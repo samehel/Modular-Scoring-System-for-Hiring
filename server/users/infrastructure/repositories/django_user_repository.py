@@ -1,7 +1,7 @@
-from server.users.domain.value_objects.email import Email
-from server.users.models import User as UserModel
-from server.users.domain.entities.user import User
-from server.users.domain.interfaces.user_repository import UserRepository
+from users.domain.value_objects.email import Email
+from users.models import User as UserModel
+from users.domain.entities.user import User
+from users.domain.interfaces.user_repository import UserRepository
 from datetime import datetime
 
 class DjangoUserRepository(UserRepository):

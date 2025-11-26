@@ -25,13 +25,9 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 # MongoEngine connection
 connect(
-    alias="default",
     db=env("DB_NAME"),
-    host=env("DB_ENHOST", default=None),
-    username=env("DB_USER", default=None),
-    password=env("DB_PASSWORD", default=None),
-    authentication_source=env("DB_AUTH_SOURCE", default=None),
-    tls=env.bool("DB_TLS", default=False)
+    host=f"mongodb+srv://{env('DB_USER')}:{env('DB_PASSWORD')}@{env('DB_ENHOST')}/{env('DB_NAME')}?retryWrites=true&w=majority",
+    alias="default"
 )
 
 # Quick-start development settings - unsuitable for production
@@ -66,7 +62,7 @@ INSTALLED_APPS = [
     'rest_framework',
 
     # Modules
-    'Authentication',
+    'users',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -139,7 +135,12 @@ WSGI_APPLICATION = 'scoring_sys_bknd.wsgi.application'
 # Database
 # Django's relational database settings are intentionally left empty because
 # MongoEngine manages the MongoDB connection separately above.
-DATABASES = {}
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 # ADDITIONAL SECURITY SETTINGS
 

@@ -1,5 +1,5 @@
-from server.users.application.dtos.user_profile_dto import UserProfileDto
-from server.users.domain.interfaces.user_repository import UserRepository
+from users.application.dtos.user_profile_dto import UserProfileDto
+from users.domain.interfaces.user_repository import UserRepository
 
 class GetUserProfileUseCase():
     def __init__(self, user_repository: UserRepository):
@@ -13,7 +13,7 @@ class GetUserProfileUseCase():
         
         user_profile = UserProfileDto(
             user_id=user.id,
-            email=user.email,
+            email=user.email.value,
             user_type=user.user_type.value,
             profile_data={},
             created_at=user.created_at

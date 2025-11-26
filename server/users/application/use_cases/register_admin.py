@@ -1,11 +1,11 @@
 import bcrypt
 import uuid 
 
-from server.users.application.dtos.register_admin_dto import RegisterAdminDto 
-from server.users.domain.entities.user import User
-from server.users.domain.interfaces.user_repository import UserRepository
-from server.users.domain.value_objects.email import Email
-from server.users.domain.value_objects.user_type import UserType
+from users.application.dtos.register_admin_dto import RegisterAdminDto 
+from users.domain.entities.user import User
+from users.domain.interfaces.user_repository import UserRepository
+from users.domain.value_objects.email import Email
+from users.domain.value_objects.user_type import UserType
 from datetime import datetime
 
 class RegisterAdminUseCase():
