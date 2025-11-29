@@ -25,7 +25,6 @@ api.interceptors.response.use(
           break;
         case 401:
           // Unauthorized - Authentication required
-          toast('You need to log in first')
           console.error('Authentication Error:', error.response.data);
           break;
         case 403:

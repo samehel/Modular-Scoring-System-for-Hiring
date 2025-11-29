@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     let mounted = true;
     const init = async () => {
       try {
-        const payload: UserProfileDTO = await AuthService.getProfile(); 
+        const payload: UserProfileDTO = await AuthService.getProfile();
         if (payload) {
           if (!mounted) 
             return;

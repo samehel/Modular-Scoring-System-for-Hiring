@@ -3,7 +3,11 @@ from rest_framework.response import Response
 from rest_framework import status
 
 class LogoutView(APIView):
-    def post(self, _):
-        response = Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)
-        response.delete_cookie('token')
+    def post(self, request):
+        if "token" in request.COOKIES:
+            response = Response({"message": "Logged out successfully"}, status=status.HTTP_200_OK)
+            response.delete_cookie('token')
+        else:
+            response = Response({"message": "You are not logged in"}, status=status.HTTP_200_OK)
+
         return response
