@@ -1,0 +1,7 @@
+from enum import Enum
+
+class CriterionType(Enum):
+    KEYWORD_MATCH = "KEYWORD_MATCH"
+    YEARS_EXPERIENCE = "YEARS_EXPERIENCE"
+    EDUCATION_LEVEL = "EDUCATION_LEVEL"
+    SKILLS_MATCH = "SKILLS_MATCH"
