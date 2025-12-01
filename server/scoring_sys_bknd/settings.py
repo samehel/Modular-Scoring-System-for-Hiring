@@ -63,6 +63,7 @@ INSTALLED_APPS = [
 
     # Modules
     'users',
+    'assessments'
 ]
 
 AUTHENTICATION_BACKENDS = [
