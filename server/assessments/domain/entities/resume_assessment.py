@@ -1,6 +1,6 @@
 
 import datetime
-from server.assessments.domain.entities.assessment_base import AssessmentBase
+from assessments.domain.entities.assessment_base import AssessmentBase
 
 
 class ResumeAssessment(AssessmentBase):

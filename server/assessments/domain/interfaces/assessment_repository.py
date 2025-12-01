@@ -1,12 +1,17 @@
 
 from abc import ABC, abstractmethod
 
-from server.assessments.domain.entities.assessment_base import AssessmentBase
+from assessments.domain.entities.assessment_base import AssessmentBase
+from assessments.domain.value_objects.link_token import LinkToken
 
 class AssessmentRepository(ABC):
 
     @abstractmethod
     def save(self, assessment: AssessmentBase) -> AssessmentBase | None:
+        pass
+
+    @abstractmethod
+    def save_link(self, assessment_id: str, token: LinkToken) -> None:
         pass
 
     @abstractmethod
