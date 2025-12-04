@@ -6,9 +6,10 @@ from users.domain.value_objects.user_type import UserType
 # Create your models here.
 
 class User(Document):
+    id = StringField(primary_key=True)
     email = StringField(required=True, unique=True)
     password_hash = StringField(required=True)
-    user_type = EnumField(UserType, choices=[UserType.ADMIN, UserType.CANDIDATE])
+    user_type = EnumField(UserType)
     created_at = DateTimeField(default=datetime.now)
     updated_at = DateTimeField(default=datetime.now)
 

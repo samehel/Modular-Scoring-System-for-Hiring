@@ -20,6 +20,7 @@ class DjangoUserRepository(UserRepository):
     def _to_model(self, user: User) -> UserModel:
         """Convert domain User entity to MongoDB UserModel"""
         return UserModel(
+            id=user.id,
             email=user.email.value,
             password_hash=user.password_hash,
             user_type=user.user_type,
