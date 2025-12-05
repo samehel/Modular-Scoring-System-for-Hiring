@@ -11,11 +11,11 @@ class AssessmentRepository(ABC):
         pass
 
     @abstractmethod
-    def save_link(self, assessment_id: str, token: LinkToken) -> None:
+    def save_link(self, assessment_id: str, link_token: LinkToken) -> LinkToken:
         pass
 
     @abstractmethod
-    def find_by_id(self, id: str) -> AssessmentBase | None:
+    def find_by_id(self, Id: str) -> AssessmentBase | None:
         pass
 
     @abstractmethod
@@ -31,5 +31,5 @@ class AssessmentRepository(ABC):
         pass
 
     @abstractmethod
-    def delete(self, id: str) -> bool:
+    def delete(self, Id: str) -> bool:
         pass
