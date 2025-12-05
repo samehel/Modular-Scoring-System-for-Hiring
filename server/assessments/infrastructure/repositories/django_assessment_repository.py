@@ -5,6 +5,7 @@ from assessments.domain.interfaces.assessment_repository import AssessmentReposi
 from assessments.domain.value_objects.link_token import LinkToken
 from assessments.models import Assessment as AssessmentModel, AssessmentLink
 from assessments.models import ResumeAssessment as ResumeAssessmentModel
+from assessments.models import Criterion as CriterionModel
 from assessments.domain.value_objects.assessment_type import AssessmentType
 from users.models import User as UserModel
 from datetime import datetime
@@ -12,7 +13,10 @@ from datetime import datetime
 class DjangoAssessmentRepository(AssessmentRepository):
 
     def _to_domain(self, assessment_model: AssessmentModel) -> AssessmentBase:
-        """Convert MongoDB AssessmentModel to domain AssessmentBase entity"""
+        # Fetch all criteria for this assessment
+        criterion_models = CriterionModel.objects(assessment=str(assessment_model.id)).all()
+        criteria = [self._criterion_to_domain(cm) for cm in criterion_models]
+        
         if assessment_model.type == AssessmentType.RESUME:
             return ResumeAssessment(
                 id=str(assessment_model.id),
@@ -23,11 +27,11 @@ class DjangoAssessmentRepository(AssessmentRepository):
                 created_by=str(assessment_model.created_by.id),
                 created_at=assessment_model.created_at,
                 updated_at=assessment_model.updated_at,
-                criteria=[]  # Criteria fetched separately
+                criteria=criteria
             )
         else:
-            raise ValueError(f"Unsupported assessment type: {assessment_model.type}")
-    
+            raise ValueError(f"Unsupported assessment type: {assessment.type}")    
+
     def _to_model(self, assessment: AssessmentBase) -> AssessmentModel:
         """Convert domain entity to MongoDB model"""
         if assessment.type == AssessmentType.RESUME:
@@ -44,10 +48,34 @@ class DjangoAssessmentRepository(AssessmentRepository):
         else:
             raise ValueError(f"Unsupported assessment type: {assessment.type}")
 
+    def _criterion_to_domain(self, criterion_model: CriterionModel) -> Criterion:
+        return Criterion(
+            id=criterion_model.id,
+            name=criterion_model.name,
+            type=criterion_model.type,
+            weight=criterion_model.weight,
+            rules=criterion_model.rules
+        )
+
+    def _criterion_to_model(self, criterion: Criterion, assessment_id: str) -> CriterionModel:
+        return CriterionModel(
+            assessment=assessment_id,
+            name=criterion.name,
+            type=criterion.type,
+            weight=criterion.weight,
+            rules=criterion.rules
+        )
 
     def save(self, assessment: AssessmentBase) -> AssessmentBase | None:
         new_assessment = self._to_model(assessment)
         saved_assessment = new_assessment.save()
+        
+        # Save criteria if ResumeAssessment
+        if isinstance(assessment, ResumeAssessment) and assessment.criteria:
+            for criterion in assessment.criteria:
+                criterion_model = self._criterion_to_model(criterion, str(saved_assessment.id))
+                criterion_model.save()
+        
         return self._to_domain(saved_assessment) if saved_assessment else None
     
     def save_link(self, assessment_id: str, link_token: LinkToken) -> LinkToken:
@@ -97,8 +125,21 @@ class DjangoAssessmentRepository(AssessmentRepository):
         assessment_model.status = assessment.status
         assessment_model.updated_at = datetime.now()
         assessment_model.save()
+        
+        # Update criteria if ResumeAssessment
+        if isinstance(assessment, ResumeAssessment):
+            # Delete existing criteria
+            CriterionModel.objects(assessment=assessment.id).delete()
+            # Save new criteria
+            for criterion in assessment.criteria:
+                criterion_model = self._criterion_to_model(criterion, assessment.id)
+                criterion_model.save()
+        
         return self._to_domain(assessment_model)
 
     def delete(self, Id: str) -> bool:
+        # Delete all criteria first
+        CriterionModel.objects(assessment=Id).delete()
+        # Delete assessment
         deleted_count = AssessmentModel.objects(id=Id).delete()
         return deleted_count > 0
