@@ -1,5 +1,6 @@
 
 from assessments.domain.entities.assessment_base import AssessmentBase
+from assessments.domain.entities.criterion import Criterion
 from assessments.domain.entities.resume_assessment import ResumeAssessment
 from assessments.domain.interfaces.assessment_repository import AssessmentRepository
 from assessments.domain.value_objects.link_token import LinkToken
