@@ -1,7 +1,8 @@
 
 import datetime
 from assessments.domain.entities.assessment_base import AssessmentBase
-
+from assessments.domain.value_objects.assessment_type import AssessmentType
+from assessments.domain.value_objects.assessment_status import AssessmentStatus
 
 class ResumeAssessment(AssessmentBase):
     def __init__(self, id: str, name: str, description: str, 
