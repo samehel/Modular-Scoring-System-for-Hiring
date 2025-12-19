@@ -8,6 +8,8 @@ from users.models import User
 # Create your models here.
 
 class Assessment(Document):
+    meta = { 'allow_inheritance': True }
+
     id = StringField(primary_key=True)
     name = StringField(required=True)
     description = StringField(required=True)
