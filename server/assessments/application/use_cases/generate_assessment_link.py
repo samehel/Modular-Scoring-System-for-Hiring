@@ -15,7 +15,7 @@ class GenerateAssessmentLinkUseCase():
         if dto.assessment_id is None or dto.assessment_id == "":
             raise ValueError("Assessment ID cannot be empty")
 
-        if dto.expiration_days is None or dto.expiration_days is 0:
+        if dto.expiration_days is None or dto.expiration_days <= 0:
             raise ValueError("To generate a link, the days till expiry need to be > 0")
         
         link_token = LinkToken(

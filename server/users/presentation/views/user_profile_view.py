@@ -4,6 +4,7 @@ import environ
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+
 from users.application.use_cases.get_user_profile import GetUserProfileUseCase
 from users.infrastructure.repositories.django_user_repository import DjangoUserRepository
 from users.presentation.serializers.user_serializer import UserSerializer
