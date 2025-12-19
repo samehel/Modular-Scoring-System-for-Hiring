@@ -4,7 +4,7 @@ from rest_framework import status
 
 from assessments.infrastructure.repositories.django_assessment_repository import DjangoAssessmentRepository
 from assessments.presentation.middleware.auth_middleware import AuthMiddleware
-from server.assessments.presentation.serializers.resume_assessment_serializer import ResumeAssessmentSerializer
+from assessments.presentation.serializers.resume_assessment_serializer import ResumeAssessmentSerializer
 from users.domain.value_objects.user_type import UserType
 
 class AdminAssessmentListView(APIView):
