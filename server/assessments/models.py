@@ -1,7 +1,6 @@
 from datetime import datetime
-from mongoengine import DateTimeField, DictField, Document, EnumField, FloatField, ReferenceField, StringField
-from assessments.domain.value_objects.criterion_type import CriterionType
-from assessments.domain.value_objects.assessment_status import AssessmentStatus
+from enum import unique
+from mongoengine import DateTimeField, DictField, Document, FloatField, ReferenceField, StringField
 from users.models import User
 
 # Create your models here.
@@ -33,3 +32,20 @@ class AssessmentLink(Document):
     token = StringField(required=True, unique=True)
     expiration = DateTimeField(required=True)
     created_at = DateTimeField(default=datetime.now)
+
+class AssessmentResult(Document):
+    assessment = ReferenceField(Assessment)
+    candidate = ReferenceField(User, null=True)
+    total_score = FloatField(required=True)
+    submitted_at = DateTimeField(required=True)
+
+class ResumeData(Document):
+    assessment_result = ReferenceField(AssessmentResult, unique=True)
+    parsed_data = DictField(required=True)
+
+class ScoreBreakdown(Document):
+    result = ReferenceField(AssessmentResult)
+    criterion = ReferenceField(Criterion)
+    score = FloatField(required=True)
+
+
