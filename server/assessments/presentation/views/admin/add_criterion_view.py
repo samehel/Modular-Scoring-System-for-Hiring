@@ -4,14 +4,14 @@ from rest_framework import status
 
 from assessments.presentation.serializers.resume_assessment_serializer import ResumeAssessmentSerializer
 from assessments.infrastructure.repositories.django_assessment_repository import DjangoAssessmentRepository
-from assessments.presentation.middleware.auth_middleware import AuthMiddleware
+from assessments.presentation.middleware.auth_middleware import RequireUserType
 from assessments.presentation.serializers.criterion_serializer import CriterionSerializer
 from assessments.application.use_cases.add_criterion_to_assessment import AddCriterionToAssessmentUseCase
 from users.domain.value_objects.user_type import UserType
 from assessments.application.dtos.criterion_dto import CriterionDTO
 
 class AddCriterionView(APIView):
-    permission_classes = [AuthMiddleware(UserType.ADMIN)]
+    permission_classes = [RequireUserType(UserType.ADMIN)]
 
     def post(self, request, id):
         try:

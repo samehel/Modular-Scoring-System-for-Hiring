@@ -3,14 +3,14 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from assessments.infrastructure.repositories.django_assessment_repository import DjangoAssessmentRepository
-from assessments.presentation.middleware.auth_middleware import AuthMiddleware
+from assessments.presentation.middleware.auth_middleware import RequireUserType
 from assessments.application.dtos.assessment_link_dto import AssessmentLinkDTO
 from assessments.application.use_cases.generate_assessment_link import GenerateAssessmentLinkUseCase
 from assessments.presentation.serializers.assessment_link_serializer import AssessmentLinkSerializer
 from users.domain.value_objects.user_type import UserType
 
 class GenerateLinkView(APIView):
-    permission_classes = [AuthMiddleware(UserType.ADMIN)]
+    permission_classes = [RequireUserType(UserType.ADMIN)]
 
     def post(self, request, id):
         try:

@@ -34,9 +34,9 @@ class CreateResumeAssessmentUseCase():
             id=str(uuid.uuid4()),
             name=dto.name,
             description=dto.description,
-            type=AssessmentType.RESUME,
-            status=AssessmentStatus.DRAFT,
-            created_by=user.email.value.split("@")[0],
+            type=AssessmentType.RESUME.name,
+            status=AssessmentStatus.DRAFT.name,
+            created_by=user.id,
             created_at=datetime.now(),
             updated_at=datetime.now(),
             criteria=[]

@@ -5,13 +5,13 @@ from rest_framework import status
 from assessments.presentation.serializers.resume_assessment_serializer import ResumeAssessmentSerializer
 from assessments.infrastructure.repositories.django_assessment_repository import DjangoAssessmentRepository
 from assessments.application.use_cases.create_resume_assessment import CreateResumeAssessmentUseCase
-from assessments.presentation.middleware.auth_middleware import AuthMiddleware
+from assessments.presentation.middleware.auth_middleware import RequireUserType
 from users.domain.value_objects.user_type import UserType
 from users.infrastructure.repositories.django_user_repository import DjangoUserRepository
 from assessments.application.dtos.create_resume_assessment_dto import CreateResumeAssessmentDTO
 
 class CreateResumeAssessmentView(APIView):
-    permission_classes = [AuthMiddleware(UserType.ADMIN)]
+    permission_classes = [RequireUserType(UserType.ADMIN)]
 
     def post(self, request):
         user = request.user_data

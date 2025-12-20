@@ -8,6 +8,7 @@ from assessments.models import Assessment as AssessmentModel, AssessmentLink
 from assessments.models import ResumeAssessment as ResumeAssessmentModel
 from assessments.models import Criterion as CriterionModel
 from assessments.domain.value_objects.assessment_type import AssessmentType
+from assessments.domain.value_objects.assessment_status import AssessmentStatus
 from users.models import User as UserModel
 from datetime import datetime
 
@@ -18,7 +19,7 @@ class DjangoAssessmentRepository(AssessmentRepository):
         criterion_models = CriterionModel.objects(assessment=str(assessment_model.id)).all()
         criteria = [self._criterion_to_domain(cm) for cm in criterion_models]
         
-        if assessment_model.type == AssessmentType.RESUME:
+        if assessment_model.type == AssessmentType.RESUME.name:
             return ResumeAssessment(
                 id=str(assessment_model.id),
                 name=assessment_model.name,
@@ -31,11 +32,11 @@ class DjangoAssessmentRepository(AssessmentRepository):
                 criteria=criteria
             )
         else:
-            raise ValueError(f"Unsupported assessment type: {assessment.type}")    
+            raise ValueError(f"Unsupported assessment type: {assessment_model.type}")    
 
     def _to_model(self, assessment: AssessmentBase) -> AssessmentModel:
         """Convert domain entity to MongoDB model"""
-        if assessment.type == AssessmentType.RESUME:
+        if assessment.type == AssessmentType.RESUME.name:
             return ResumeAssessmentModel(
                 id=str(assessment.id),
                 name=assessment.name,
@@ -51,7 +52,7 @@ class DjangoAssessmentRepository(AssessmentRepository):
 
     def _criterion_to_domain(self, criterion_model: CriterionModel) -> Criterion:
         return Criterion(
-            id=criterion_model.id,
+            id=str(criterion_model.id),
             name=criterion_model.name,
             type=criterion_model.type,
             weight=criterion_model.weight,

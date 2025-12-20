@@ -21,7 +21,7 @@ class AddCriterionToAssessmentUseCase():
         if dto.rules is None or len(dto.rules) == 0:
             raise ValueError("Rules have not been set for the criterion")
         
-        if dto.type is None or not isinstance(dto.type, CriterionType):
+        if dto.type is None or dto.type not in [ct.value for ct in CriterionType]:
             raise ValueError("This criterion type does not exist")
 
         if dto.weight is None or dto.weight is 0.0:

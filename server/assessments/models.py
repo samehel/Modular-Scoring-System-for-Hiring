@@ -1,6 +1,5 @@
 from datetime import datetime
 from mongoengine import DateTimeField, DictField, Document, EnumField, FloatField, ReferenceField, StringField
-from assessments.domain.value_objects.assessment_type import AssessmentType
 from assessments.domain.value_objects.criterion_type import CriterionType
 from assessments.domain.value_objects.assessment_status import AssessmentStatus
 from users.models import User
@@ -13,8 +12,8 @@ class Assessment(Document):
     id = StringField(primary_key=True)
     name = StringField(required=True)
     description = StringField(required=True)
-    type = EnumField(AssessmentType)
-    status = EnumField(AssessmentStatus)
+    type = StringField(choices=["RESUME", "CODING", "INTERVIEW"], required=True)
+    status = StringField(choices=["DRAFT", "ACTIVE", "CLOSED"], required=True)
     created_by = ReferenceField(User)
     created_at = DateTimeField(default=datetime.now)
     updated_at = DateTimeField(default=datetime.now)
@@ -25,7 +24,7 @@ class ResumeAssessment(Assessment):
 class Criterion(Document):
     assessment = ReferenceField(Assessment)
     name = StringField(required=True)
-    type = EnumField(CriterionType)
+    type = StringField(choices=["KEYWORD_MATCH", "YEARS_EXPERIENCE", "EDUCATION_LEVEL", "SKILLS_MATCH"], required=True)
     weight = FloatField(required=True)
     rules = DictField(required=True)
 

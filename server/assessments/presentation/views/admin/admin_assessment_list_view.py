@@ -3,12 +3,12 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from assessments.infrastructure.repositories.django_assessment_repository import DjangoAssessmentRepository
-from assessments.presentation.middleware.auth_middleware import AuthMiddleware
+from assessments.presentation.middleware.auth_middleware import RequireUserType
 from assessments.presentation.serializers.resume_assessment_serializer import ResumeAssessmentSerializer
 from users.domain.value_objects.user_type import UserType
 
 class AdminAssessmentListView(APIView):
-    permission_classes = [AuthMiddleware(UserType.ADMIN)]
+    permission_classes = [RequireUserType(UserType.ADMIN)]
 
     def get(self, request):
         user = request.user_data
