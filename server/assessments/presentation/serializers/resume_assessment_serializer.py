@@ -12,6 +12,7 @@ class ResumeAssessmentSerializer(serializers.Serializer):
     created_by_name = serializers.SerializerMethodField(read_only=True) 
     created_at = serializers.DateTimeField(read_only=True)
     updated_at = serializers.DateTimeField(read_only=True)
+    link_token = serializers.SerializerMethodField(read_only=True)
     
 
     def get_created_by_name(self, obj):
@@ -19,3 +20,10 @@ class ResumeAssessmentSerializer(serializers.Serializer):
         repo = DjangoUserRepository()
         user = repo.find_by_id(obj.created_by)
         return user.email.value.split("@")[0] if user else "Unknown"
+
+    def get_link_token(self, obj):
+        if obj.status == "ACTIVE":
+            from assessments.models import AssessmentLink
+            link_doc = AssessmentLink.objects(assessment=obj.id).first()
+            return link_doc.token if link_doc else None
+        return None

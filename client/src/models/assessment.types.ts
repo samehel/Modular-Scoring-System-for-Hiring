@@ -19,6 +19,7 @@ export interface AssessmentDTO {
   created_by_name?: string;
   created_at: string;
   updated_at: string;
+  link_token?: string;
 }
 
 export interface AssessmentLinkDTO {

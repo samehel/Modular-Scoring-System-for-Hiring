@@ -6,6 +6,8 @@ import {
   Button,
   Card,
   Container,
+  CopyButton,
+  ActionIcon,
   Group,
   Loader,
   SimpleGrid,
@@ -137,6 +139,24 @@ export default function AdminDashboardPage() {
                     </Text>
 
                     {/* Action buttons */}
+                    {a.status === 'ACTIVE' && a.link_token && (
+                      <Group gap="xs" mt="sm">
+                        <Text size="xs" fw={500}>Public Link:</Text>
+                        <Group gap={4} wrap="nowrap" style={{ flex: 1, background: 'var(--mantine-color-gray-1)', padding: '4px 8px', borderRadius: '4px' }}>
+                          <Text size="xs" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
+                            {`${window.location.origin}/assessment/${a.link_token}`}
+                          </Text>
+                          <CopyButton value={`${window.location.origin}/assessment/${a.link_token}`} timeout={2000}>
+                            {({ copied, copy }) => (
+                              <ActionIcon color={copied ? 'teal' : 'gray'} variant="subtle" onClick={copy}>
+                                {copied ? '✓' : '📋'}
+                              </ActionIcon>
+                            )}
+                          </CopyButton>
+                        </Group>
+                      </Group>
+                    )}
+                    
                     <Group gap="xs" mt="auto" pt="sm" style={{ borderTop: '1px solid var(--mantine-color-gray-2)' }}>
                       {a.status === 'DRAFT' && (
                         <Button
