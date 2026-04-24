@@ -109,10 +109,8 @@ export default function AdminDashboardPage() {
                   withBorder
                   radius="md"
                   p="lg"
-                  style={{ cursor: 'pointer' }}
-                  onClick={() => navigate(`/admin/assessments/${a.id}/results`)}
                 >
-                  <Stack gap="sm">
+                  <Stack gap="sm" style={{ height: '100%' }}>
                     <Group justify="space-between" align="flex-start">
                       <Text fw={600} size="md" style={{ flex: 1 }}>
                         {a.name}
@@ -133,6 +131,31 @@ export default function AdminDashboardPage() {
                     <Text size="xs" c="dimmed">
                       Created {new Date(a.created_at).toLocaleDateString()}
                     </Text>
+
+                    {/* Action buttons */}
+                    <Group gap="xs" mt="auto" pt="sm" style={{ borderTop: '1px solid var(--mantine-color-gray-2)' }}>
+                      {a.status === 'DRAFT' && (
+                        <Button
+                          size="xs"
+                          variant="light"
+                          color="blue"
+                          onClick={() =>
+                            navigate('/admin/assessments/resume/create', {
+                              state: { assessment: a },
+                            })
+                          }
+                        >
+                          ✏️ Continue Editing
+                        </Button>
+                      )}
+                      <Button
+                        size="xs"
+                        variant="subtle"
+                        onClick={() => navigate(`/admin/assessments/${a.id}/results`)}
+                      >
+                        📊 View Results
+                      </Button>
+                    </Group>
                   </Stack>
                 </Card>
               ))}

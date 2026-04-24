@@ -1,4 +1,3 @@
-// src/pages/admin/CreateResumeAssessmentPage.tsx
 import { useEffect } from 'react';
 import {
   Alert,
@@ -18,17 +17,34 @@ import {
   Title,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useResumeAssessmentViewModel } from '../../viewmodels/ResumeAssessmentViewModel';
 import CriterionForm from '../../components/admin/CriterionForm';
 import CriterionList from '../../components/admin/CriterionList';
+import { AssessmentDTO } from '../../models/assessment.types';
 
 export default function CreateResumeAssessmentPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const vm = useResumeAssessmentViewModel();
 
+  // If navigated here with an existing assessment (from the dashboard), hydrate the VM
+  const incomingAssessment: AssessmentDTO | undefined = (location.state as { assessment?: AssessmentDTO })?.assessment;
+  const isResuming = !!incomingAssessment;
+
+  useEffect(() => {
+    if (incomingAssessment && !vm.assessment) {
+      vm.loadAssessment(incomingAssessment);
+    }
+  // Only run once on mount
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const form = useForm({
-    initialValues: { name: '', description: '' },
+    initialValues: {
+      name: incomingAssessment?.name ?? '',
+      description: incomingAssessment?.description ?? '',
+    },
     validate: {
       name: (v) => (!v.trim() ? 'Name is required' : v.length > 255 ? 'Max 255 characters' : null),
       description: (v) => (!v.trim() ? 'Description is required' : null),
@@ -65,7 +81,14 @@ export default function CreateResumeAssessmentPage() {
         px="xl"
       >
         <Group justify="space-between">
-          <Title order={3}>Create Resume Assessment</Title>
+          <Stack gap={0}>
+            <Title order={3}>
+              {isResuming ? `Editing: ${incomingAssessment?.name}` : 'Create Resume Assessment'}
+            </Title>
+            {isResuming && (
+              <Text size="sm" c="dimmed">Resuming a saved draft — your criteria are pre-loaded</Text>
+            )}
+          </Stack>
           <Button variant="subtle" onClick={() => navigate('/admin/dashboard')}>
             ← Back to Dashboard
           </Button>

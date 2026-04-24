@@ -38,6 +38,14 @@ export function useResumeAssessmentViewModel() {
     [],
   );
 
+  /** Hydrate the ViewModel from an already-persisted AssessmentDTO (resume a draft). */
+  const loadAssessment = useCallback((existing: AssessmentDTO) => {
+    setAssessment(existing);
+    setCriteria(existing.criteria ?? []);
+    setGeneratedLink(null);
+    setError(null);
+  }, []);
+
   /** Add a criterion to the current assessment (persists to backend). */
   const addCriterion = useCallback(
     async (criterion: AddCriterionPayload) => {
@@ -99,6 +107,7 @@ export function useResumeAssessmentViewModel() {
     loading,
     error,
     createAssessment,
+    loadAssessment,
     addCriterion,
     generateLink,
     reset,
