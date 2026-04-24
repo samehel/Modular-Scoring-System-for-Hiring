@@ -7,12 +7,13 @@ import {
   Card,
   Container,
   CopyButton,
-  ActionIcon,
   Group,
   Loader,
+  Modal,
   SimpleGrid,
   Stack,
   Text,
+  TextInput,
   Title,
 } from '@mantine/core';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -33,6 +34,7 @@ export default function AdminDashboardPage() {
   const [assessments, setAssessments] = useState<AssessmentDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedAssessmentLink, setSelectedAssessmentLink] = useState<string | null>(null);
 
   // Re-fetch every time this page is navigated to (location.key changes on each visit)
   useEffect(() => {
@@ -140,21 +142,15 @@ export default function AdminDashboardPage() {
 
                     {/* Action buttons */}
                     {a.status === 'ACTIVE' && a.link_token && (
-                      <Group gap="xs" mt="sm">
-                        <Text size="xs" fw={500}>Public Link:</Text>
-                        <Group gap={4} wrap="nowrap" style={{ flex: 1, background: 'var(--mantine-color-gray-1)', padding: '4px 8px', borderRadius: '4px' }}>
-                          <Text size="xs" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', flex: 1 }}>
-                            {`${window.location.origin}/assessment/${a.link_token}`}
-                          </Text>
-                          <CopyButton value={`${window.location.origin}/assessment/${a.link_token}`} timeout={2000}>
-                            {({ copied, copy }) => (
-                              <ActionIcon color={copied ? 'teal' : 'gray'} variant="subtle" onClick={copy}>
-                                {copied ? '✓' : '📋'}
-                              </ActionIcon>
-                            )}
-                          </CopyButton>
-                        </Group>
-                      </Group>
+                      <Button
+                        size="xs"
+                        variant="light"
+                        color="teal"
+                        mt="xs"
+                        onClick={() => setSelectedAssessmentLink(`${window.location.origin}/assessment/${a.link_token}`)}
+                      >
+                        🔗 Get Link
+                      </Button>
                     )}
                     
                     <Group gap="xs" mt="auto" pt="sm" style={{ borderTop: '1px solid var(--mantine-color-gray-2)' }}>
@@ -187,6 +183,31 @@ export default function AdminDashboardPage() {
           )}
         </Stack>
       </Container>
+
+      <Modal
+        opened={!!selectedAssessmentLink}
+        onClose={() => setSelectedAssessmentLink(null)}
+        title="Assessment Link"
+        centered
+      >
+        <Stack gap="md">
+          <Text size="sm">Share this link with candidates to allow them to take the assessment.</Text>
+          <Group gap="xs" align="flex-end">
+            <TextInput
+              style={{ flex: 1 }}
+              readOnly
+              value={selectedAssessmentLink || ''}
+            />
+            <CopyButton value={selectedAssessmentLink || ''} timeout={2000}>
+              {({ copied, copy }) => (
+                <Button color={copied ? 'teal' : 'blue'} onClick={copy}>
+                  {copied ? 'Copied' : 'Copy'}
+                </Button>
+              )}
+            </CopyButton>
+          </Group>
+        </Stack>
+      </Modal>
     </Box>
   );
 }
