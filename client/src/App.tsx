@@ -12,6 +12,7 @@ import CandidateRegisterPage from './pages/auth/CandidateRegisterPage'
 import AdminDashboardPage from './pages/admin/AdminDashboardPage'
 import CreateResumeAssessmentPage from './pages/admin/CreateResumeAssessmentPage'
 import AssessmentResultsPage from './pages/admin/AssessmentResultsPage'
+import ResultDetailPage from './pages/admin/ResultDetailPage'
 
 // Candidate pages (protected — CANDIDATE only)
 import CandidateHistoryPage from './pages/candidate/CandidateHistoryPage'
@@ -61,6 +62,14 @@ function App() {
             element={
               <ProtectedRoute requiredUserType="ADMIN">
                 <AssessmentResultsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/results/:id"
+            element={
+              <ProtectedRoute requiredUserType="ADMIN">
+                <ResultDetailPage />
               </ProtectedRoute>
             }
           />

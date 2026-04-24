@@ -48,7 +48,12 @@ class SubmitResumeView(APIView):
 
         # Optional: associate with a logged-in candidate
         candidate_id = None
-        token = request.COOKIES.get("token")
+        auth_header = request.headers.get("Authorization")
+        if auth_header and auth_header.startswith("Bearer "):
+            token = auth_header.split(" ")[1]
+        else:
+            token = None
+
         if token:
             try:
                 import jwt
@@ -84,6 +89,7 @@ class SubmitResumeView(APIView):
             return Response(
                 {
                     "message": "Resume submitted and scored successfully",
+                    "result_id": result.result_id,
                     "total_score": result.total_score,
                     "scores": result.scores,
                     "parsed_data": result.parsed_data,

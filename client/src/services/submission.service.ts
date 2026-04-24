@@ -4,6 +4,7 @@ import { AssessmentResultDTO } from '../models/assessment.types';
 
 export interface ResumeSubmissionResult {
   message: string;
+  result_id?: string;
   total_score: number;
   scores: AssessmentResultDTO['score_breakdown'];
   parsed_data: Record<string, string>;

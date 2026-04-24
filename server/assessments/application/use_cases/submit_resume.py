@@ -68,10 +68,11 @@ class SubmitResumeUseCase:
             "score_breakdown": score_details,
             "submitted_at": datetime.now(),
         }
-        self.result_repository.save_result(result_data)
+        saved_result = self.result_repository.save_result(result_data)
 
         # 5. Return DTO
         return ResumeResultDTO(
+            result_id=saved_result.get("id"),
             parsed_data=parsed_data,
             scores=score_details,
             total_score=total_score,

@@ -15,9 +15,10 @@ import {
 import { useForm } from '@mantine/form';
 import { RegisterCandidateDTO } from '../../models/auth.types';
 import { useAuth } from '../../contexts/AuthContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const CandidateRegisterPage = () => {
+  const navigate = useNavigate();
   const { registerCandidate } = useAuth();
   const [submitting, setSubmitting] = useState(false);
 
@@ -43,6 +44,7 @@ const CandidateRegisterPage = () => {
     try {
       await registerCandidate(values);
       form.reset();
+      navigate('/login');
     } finally {
       setSubmitting(false);
     }

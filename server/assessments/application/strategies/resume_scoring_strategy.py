@@ -25,9 +25,9 @@ class ResumeScoringStrategy(ScoringStrategy):
         '''
         KEYWORD MATCH
         '''
-        isKeywordMatchEnabled = any(criterion.type == CriterionType.KEYWORD_MATCH for criterion in criteria)
+        isKeywordMatchEnabled = any(criterion.type == CriterionType.KEYWORD_MATCH.value for criterion in criteria)
         if isKeywordMatchEnabled:
-            criterion = next(criterion for criterion in criteria if criterion.type == CriterionType.KEYWORD_MATCH)
+            criterion = next(criterion for criterion in criteria if criterion.type == CriterionType.KEYWORD_MATCH.value)
 
             if data["summary"] is None or data["summary"] == "":
                 # We will assume that if the admin has this enabled, then they expect the candidate to have a summary
@@ -47,9 +47,9 @@ class ResumeScoringStrategy(ScoringStrategy):
         '''
         YEARS EXPERIENCE MATCH
         '''
-        isYearsExperienceMatchEnabled = any(criterion.type == CriterionType.YEARS_EXPERIENCE for criterion in criteria)
+        isYearsExperienceMatchEnabled = any(criterion.type == CriterionType.YEARS_EXPERIENCE.value for criterion in criteria)
         if isYearsExperienceMatchEnabled:
-            criterion = next(criterion for criterion in criteria if criterion.type == CriterionType.YEARS_EXPERIENCE)
+            criterion = next(criterion for criterion in criteria if criterion.type == CriterionType.YEARS_EXPERIENCE.value)
 
             if data["experience"] is None or data["experience"] == "":
                 total_weight -= (criterion.weight * 100)
@@ -77,9 +77,9 @@ class ResumeScoringStrategy(ScoringStrategy):
         '''
         EDUCATION LEVEL MATCH
         '''
-        isEducationLevelMatchEnabled = any(criterion.type == CriterionType.EDUCATION_LEVEL for criterion in criteria)
+        isEducationLevelMatchEnabled = any(criterion.type == CriterionType.EDUCATION_LEVEL.value for criterion in criteria)
         if isEducationLevelMatchEnabled:
-            criterion = next(criterion for criterion in criteria if criterion.type == CriterionType.EDUCATION_LEVEL)
+            criterion = next(criterion for criterion in criteria if criterion.type == CriterionType.EDUCATION_LEVEL.value)
 
             if data["education"] is None or data["education"] == "":
                 total_weight -= (criterion.weight * 100)
@@ -111,9 +111,9 @@ class ResumeScoringStrategy(ScoringStrategy):
         ''' 
         SKILLS MATCH
         '''
-        isSkillMatchEnabled = any(criterion.type == CriterionType.SKILLS_MATCH for criterion in criteria)
+        isSkillMatchEnabled = any(criterion.type == CriterionType.SKILLS_MATCH.value for criterion in criteria)
         if isSkillMatchEnabled:
-            criterion = next(criterion for criterion in criteria if criterion.type == CriterionType.SKILLS_MATCH)
+            criterion = next(criterion for criterion in criteria if criterion.type == CriterionType.SKILLS_MATCH.value)
 
             if data["skills"] is None or data["skills"] == "":
                 total_weight -= (criterion.weight * 100)

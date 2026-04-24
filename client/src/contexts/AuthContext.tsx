@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { LoginDTO, RegisterAdminDTO, RegisterCandidateDTO, UserProfileDTO } from "../models/auth.types"
 import AuthService from "../services/auth.service";
+import ResultService from "../services/result.service";
 import { toast } from "react-toastify";
 
 type AuthContextType = {
@@ -40,6 +41,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(userProfile);
         setIsAuthenticated(true);
         toast('Successfully logged in');
+        await checkPendingResult(userProfile);
         return userProfile;
     }
 
@@ -61,6 +63,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     }
     
+    const checkPendingResult = async (userProfile: UserProfileDTO) => {
+        if (userProfile.user_type === 'CANDIDATE') {
+            const pendingResultId = localStorage.getItem('pending_result_id');
+            if (pendingResultId) {
+                try {
+                    await ResultService.claimResult(pendingResultId);
+                    localStorage.removeItem('pending_result_id');
+                    toast('Your previous assessment result has been saved to your account!');
+                } catch (e) {
+                    console.error('Failed to claim result', e);
+                }
+            }
+        }
+    };
+
   useEffect(() => {
     let mounted = true;
     const init = async () => {
@@ -71,6 +88,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             return;
           setUser(payload);
           setIsAuthenticated(true);
+          await checkPendingResult(payload);
         } else {
           setUser(null);
           setIsAuthenticated(false);

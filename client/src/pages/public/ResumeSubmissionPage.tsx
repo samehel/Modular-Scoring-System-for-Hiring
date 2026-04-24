@@ -13,12 +13,15 @@ import {
   Text,
   Title,
 } from '@mantine/core';
+import { useAuth } from '../../contexts/AuthContext';
+import { Link } from 'react-router-dom';
 import { useResumeSubmissionViewModel } from '../../viewmodels/ResumeSubmissionViewModel';
 import FileUpload from '../../components/shared/FileUpload';
 import ResultDisplay from '../../components/candidate/ResultDisplay';
 
 export default function ResumeSubmissionPage() {
   const { token } = useParams<{ token: string }>();
+  const { user } = useAuth();
   const vm = useResumeSubmissionViewModel();
 
   // Reset when the token changes
@@ -116,6 +119,28 @@ export default function ResumeSubmissionPage() {
                   Your resume has been received and scored. Here are your results:
                 </Alert>
                 <ResultDisplay result={vm.result} />
+                
+                {!user && (
+                  <Card withBorder radius="md" p="md" bg="blue.0">
+                    <Group justify="space-between" align="center">
+                      <Text fw={500} c="blue.9">Want to save your results?</Text>
+                      <Button
+                        component={Link}
+                        to="/candidate-register"
+                        color="blue"
+                        variant="light"
+                        onClick={() => {
+                          if (vm.result?.result_id) {
+                            localStorage.setItem('pending_result_id', vm.result.result_id);
+                          }
+                        }}
+                      >
+                        Create an account
+                      </Button>
+                    </Group>
+                  </Card>
+                )}
+
                 <Button
                   id="submit-another-btn"
                   variant="light"

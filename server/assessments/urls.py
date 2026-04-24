@@ -23,6 +23,7 @@ from assessments.presentation.views.public.TestViews import StartTestView, Submi
 
 # ── Candidate — History (Phase 7) ────────────────────────────────────────────
 from assessments.presentation.views.candidate.CandidateHistoryView import CandidateHistoryView
+from assessments.presentation.views.candidate.ClaimResultView import ClaimResultView
 
 urlpatterns = [
     # Admin — Resume
@@ -52,4 +53,5 @@ urlpatterns = [
 
     # Candidate — History
     path("api/candidate/history/", CandidateHistoryView.as_view(), name="candidate_history"),
+    path("api/candidate/results/claim/", ClaimResultView.as_view(), name="claim_result"),
 ]

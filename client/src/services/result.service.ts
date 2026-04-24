@@ -33,6 +33,10 @@ class ResultService {
     const res = await api.get(`/api/admin/assessments/${assessmentId}/statistics/`);
     return res.data as AssessmentStatistics;
   }
+
+  static async claimResult(resultId: string): Promise<void> {
+    await api.post('/api/candidate/results/claim/', { result_id: resultId });
+  }
 }
 
 export default ResultService;
