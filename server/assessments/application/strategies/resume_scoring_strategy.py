@@ -30,10 +30,8 @@ class ResumeScoringStrategy(ScoringStrategy):
             criterion = next(criterion for criterion in criteria if criterion.type == CriterionType.KEYWORD_MATCH.value)
 
             if data["summary"] is None or data["summary"] == "":
-                # We will assume that if the admin has this enabled, then they expect the candidate to have a summary
-                # If they don't have the summary but the admin has this enabled, we will just deduct it completely from the candidate
-                # Same logic will be applied to the rest of the matching algorithms
-                total_weight -= (criterion.weight * 100)
+                # If they don't have the summary but the admin has this enabled, they simply get 0 points for this criterion.
+                pass
             else:
                 if "keywords" not in criterion.rules:
                     raise ValueError("There has to be at least one required keyword to search for")
@@ -52,7 +50,7 @@ class ResumeScoringStrategy(ScoringStrategy):
             criterion = next(criterion for criterion in criteria if criterion.type == CriterionType.YEARS_EXPERIENCE.value)
 
             if data["experience"] is None or data["experience"] == "":
-                total_weight -= (criterion.weight * 100)
+                pass
             else:
                 if "min_years" not in criterion.rules:
                     raise ValueError("There has to be at least a min. years experience required")
@@ -82,7 +80,7 @@ class ResumeScoringStrategy(ScoringStrategy):
             criterion = next(criterion for criterion in criteria if criterion.type == CriterionType.EDUCATION_LEVEL.value)
 
             if data["education"] is None or data["education"] == "":
-                total_weight -= (criterion.weight * 100)
+                pass
             else:
                 if "min_level" not in criterion.rules:
                     raise ValueError("There has to be at least a min. level education required")
@@ -116,7 +114,7 @@ class ResumeScoringStrategy(ScoringStrategy):
             criterion = next(criterion for criterion in criteria if criterion.type == CriterionType.SKILLS_MATCH.value)
 
             if data["skills"] is None or data["skills"] == "":
-                total_weight -= (criterion.weight * 100)
+                pass
             else:
                 if "required_skills" not in criterion.rules:
                     raise ValueError("There has to be at least one required skill")

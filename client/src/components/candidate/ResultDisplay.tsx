@@ -7,9 +7,12 @@ interface Props {
 }
 
 export default function ResultDisplay({ result }: Props) {
-  const { total_score, scores = [], parsed_data = {} } = result;
+  const { scores = [], parsed_data = {} } = result;
+  
+  // Re-calculate to avoid negative values from older DB records
   const maxPossible = scores.reduce((sum, s) => sum + (s?.max_score ?? 0), 0);
-  const percentage = maxPossible > 0 ? (total_score / maxPossible) * 100 : 0;
+  const clampedTotalScore = scores.reduce((sum, s) => sum + Math.max(0, s?.score ?? 0), 0);
+  const percentage = maxPossible > 0 ? Math.max(0, (clampedTotalScore / maxPossible) * 100) : 0;
 
   const getColor = (pct: number) => {
     if (pct >= 75) return 'green';
@@ -25,7 +28,7 @@ export default function ResultDisplay({ result }: Props) {
           <Group justify="space-between" align="center">
             <Title order={4}>Your Score</Title>
             <Badge size="xl" color={getColor(percentage)} variant="filled" radius="md">
-              {total_score.toFixed(1)} / {maxPossible.toFixed(1)}
+              {clampedTotalScore.toFixed(1)} / {maxPossible.toFixed(1)}
             </Badge>
           </Group>
           <Progress
@@ -53,11 +56,12 @@ export default function ResultDisplay({ result }: Props) {
             </Table.Thead>
             <Table.Tbody>
               {scores.map((s, i) => {
-                const pct = s?.max_score > 0 ? (s.score / s.max_score) * 100 : 0;
+                const clampedScore = Math.max(0, s?.score ?? 0);
+                const pct = s?.max_score > 0 ? (clampedScore / s.max_score) * 100 : 0;
                 return (
                   <Table.Tr key={s?.criterion_id ?? i}>
                     <Table.Td>{s?.criterion_name ?? '-'}</Table.Td>
-                    <Table.Td>{s?.score?.toFixed(1) ?? '-'}</Table.Td>
+                    <Table.Td>{clampedScore.toFixed(1)}</Table.Td>
                     <Table.Td>{s?.max_score?.toFixed(1) ?? '-'}</Table.Td>
                     <Table.Td>
                       <Badge color={getColor(pct)} variant="light" size="sm">
