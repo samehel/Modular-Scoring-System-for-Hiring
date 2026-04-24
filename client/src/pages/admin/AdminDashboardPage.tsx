@@ -1,4 +1,3 @@
-// src/pages/admin/AdminDashboardPage.tsx
 import { useEffect, useState } from 'react';
 import {
   Alert,
@@ -14,7 +13,7 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import AssessmentService from '../../services/assessment.service';
 import { AssessmentDTO } from '../../models/assessment.types';
 import { useAuth } from '../../contexts/AuthContext';
@@ -27,12 +26,16 @@ const STATUS_COLORS: Record<string, string> = {
 
 export default function AdminDashboardPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { user, logout } = useAuth();
   const [assessments, setAssessments] = useState<AssessmentDTO[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Re-fetch every time this page is navigated to (location.key changes on each visit)
   useEffect(() => {
+    setLoading(true);
+    setError(null);
     const load = async () => {
       try {
         const data = await AssessmentService.getAdminAssessments();
@@ -44,7 +47,8 @@ export default function AdminDashboardPage() {
       }
     };
     load();
-  }, []);
+  }, [location.key]);
+
 
   return (
     <Box style={{ minHeight: '100vh', background: 'var(--mantine-color-gray-0)' }}>

@@ -27,5 +27,11 @@ class GenerateAssessmentLinkUseCase():
 
         if saved_link_token is None:
             raise ValueError("Failed to create a new link for the assessment")
-        
-        return saved_link_token
+
+        # Transition assessment from DRAFT -> ACTIVE
+        assessment = self.assessment_repository.find_by_id(dto.assessment_id)
+        if assessment:
+            assessment.status = "ACTIVE"
+            self.assessment_repository.update(assessment)
+
+        return saved_link_token
