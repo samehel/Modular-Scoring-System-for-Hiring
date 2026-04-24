@@ -57,6 +57,12 @@ class AssessmentService {
     return res.data.assessments_list as AssessmentDTO[];
   }
 
+  /** Fetch a single assessment by ID — always fresh from the database. */
+  static async getAssessmentById(assessmentId: string): Promise<AssessmentDTO> {
+    const res = await api.get(`/api/admin/assessments/${assessmentId}/`);
+    return res.data.assessment as AssessmentDTO;
+  }
+
   // ── Candidate ──────────────────────────────────────────────────────────
 
   /** Fetch paginated history for the logged-in candidate. */

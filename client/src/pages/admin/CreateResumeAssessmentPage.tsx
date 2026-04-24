@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Alert,
   Box,
@@ -22,20 +22,26 @@ import { useResumeAssessmentViewModel } from '../../viewmodels/ResumeAssessmentV
 import CriterionForm from '../../components/admin/CriterionForm';
 import CriterionList from '../../components/admin/CriterionList';
 import { AssessmentDTO } from '../../models/assessment.types';
+import AssessmentService from '../../services/assessment.service';
 
 export default function CreateResumeAssessmentPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const vm = useResumeAssessmentViewModel();
+  const [resumeLoading, setResumeLoading] = useState(false);
 
-  // If navigated here with an existing assessment (from the dashboard), hydrate the VM
+  // The dashboard passes a lightweight snapshot just to get the ID.
+  // We always refetch fresh data from the backend to avoid stale criteria.
   const incomingAssessment: AssessmentDTO | undefined = (location.state as { assessment?: AssessmentDTO })?.assessment;
   const isResuming = !!incomingAssessment;
 
   useEffect(() => {
-    if (incomingAssessment && !vm.assessment) {
-      vm.loadAssessment(incomingAssessment);
-    }
+    if (!incomingAssessment || vm.assessment) return;
+    setResumeLoading(true);
+    AssessmentService.getAssessmentById(incomingAssessment.id)
+      .then((fresh) => vm.loadAssessment(fresh))
+      .catch(() => vm.loadAssessment(incomingAssessment)) // fallback to snapshot on error
+      .finally(() => setResumeLoading(false));
   // Only run once on mount
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -69,6 +75,17 @@ export default function CreateResumeAssessmentPage() {
   const totalWeight = vm.criteria.reduce((sum, c) => sum + c.weight, 0);
   const remainingWeight = Math.max(0, parseFloat((1 - totalWeight).toFixed(2)));
   const weightPct = Math.min(100, Math.round(totalWeight * 100));
+
+  if (resumeLoading) {
+    return (
+      <Box style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Stack align="center" gap="md">
+          <Loader size="lg" />
+          <Text c="dimmed">Loading latest assessment data…</Text>
+        </Stack>
+      </Box>
+    );
+  }
 
   return (
     <Box style={{ minHeight: '100vh', background: 'var(--mantine-color-gray-0)' }}>

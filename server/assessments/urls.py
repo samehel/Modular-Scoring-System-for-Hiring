@@ -6,6 +6,7 @@ from assessments.presentation.views.admin.add_criterion_view import AddCriterion
 from assessments.presentation.views.admin.delete_criterion_view import DeleteCriterionView
 from assessments.presentation.views.admin.generate_link_view import GenerateLinkView
 from assessments.presentation.views.admin.admin_assessment_list_view import AdminAssessmentListView
+from assessments.presentation.views.admin.admin_assessment_detail_view import AdminAssessmentDetailView
 
 # ── Admin — Coding / Interview / Results (Phases 8, 12, 14) ──────────────────
 from assessments.presentation.views.admin.assessment_management_views import (
@@ -30,6 +31,7 @@ urlpatterns = [
     path("api/admin/assessments/<str:assessment_id>/criteria/<str:criterion_id>/delete/", DeleteCriterionView.as_view(), name="delete_criterion"),
     path("api/admin/assessments/<str:id>/generate-link/", GenerateLinkView.as_view(), name="generate_link"),
     path("api/admin/assessments/", AdminAssessmentListView.as_view(), name="admin_assessments_list"),
+    path("api/admin/assessments/<str:assessment_id>/", AdminAssessmentDetailView.as_view(), name="admin_assessment_detail"),
 
     # Admin — Coding & Interview
     path("api/admin/assessments/coding/create/", CreateCodingAssessmentView.as_view(), name="create_coding_assessment"),
