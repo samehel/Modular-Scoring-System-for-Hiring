@@ -14,22 +14,22 @@ class GenerateLinkView(APIView):
 
     def post(self, request, id):
         try:
+            # Default to 30 days if not specified
+            expiration_days = request.data.get("expiration_days", 30)
 
-            expiration_days = request.data.get("expiration_days")
-            if not expiration_days:
-                return Response({"error": "expiration_days is required"}, status=status.HTTP_400_BAD_REQUEST)
-            
             dto = AssessmentLinkDTO(
                 assessment_id=id,
-                expiration_days=expiration_days
+                expiration_days=int(expiration_days)
             )
 
             assessment_repository = DjangoAssessmentRepository()
             use_case = GenerateAssessmentLinkUseCase(assessment_repository)
             res = use_case.execute(dto)
-            
+
             serializer = AssessmentLinkSerializer(res)
-            response = Response({"message": "Resume Assessment Link Successfully Generated", "assessment_link": serializer.data }, status=status.HTTP_201_CREATED)
-            return response
+            return Response(
+                {"message": "Assessment link generated successfully", "link": serializer.data},
+                status=status.HTTP_201_CREATED
+            )
         except ValueError as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
