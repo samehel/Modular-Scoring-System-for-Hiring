@@ -11,9 +11,15 @@ import {
   Text,
   Title,
 } from '@mantine/core';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 
 const LandingPage = () => {
+    const { isAuthenticated, user, logout, loading } = useAuth();
+    const navigate = useNavigate();
+
+    const dashboardPath = user?.user_type === 'ADMIN' ? '/admin/dashboard' : '/candidate/history';
+
     return (
         <Box style={{ minHeight: '100vh', background: '#ffffff', color: '#1a1a1a' }}>
             {/* Navigation */}
@@ -30,12 +36,28 @@ const LandingPage = () => {
                     Scoring Platform
                 </Title>
                 <Group gap="md">
-                    <Anchor component={Link} to="/login" style={{ color: '#666', textDecoration: 'none' }}>
-                    Sign in
-                    </Anchor>
-                    <Button component={Link} to="/admin-register" radius="md" size="md">
-                    Get started
-                    </Button>
+                    {!loading && isAuthenticated && user ? (
+                    <>
+                        <Button component={Link} to={dashboardPath} radius="md" size="md">
+                        Go to Dashboard
+                        </Button>
+                        <Anchor
+                        onClick={logout}
+                        style={{ color: '#666', textDecoration: 'none', cursor: 'pointer' }}
+                        >
+                        Sign out
+                        </Anchor>
+                    </>
+                    ) : (
+                    <>
+                        <Anchor component={Link} to="/login" style={{ color: '#666', textDecoration: 'none' }}>
+                        Sign in
+                        </Anchor>
+                        <Button component={Link} to="/admin-register" radius="md" size="md">
+                        Get started
+                        </Button>
+                    </>
+                    )}
                 </Group>
                 </Group>
             </Container>
@@ -52,24 +74,33 @@ const LandingPage = () => {
                     Design modular evaluation templates with weighted criteria, pass/fail rules, and optional bonuses. Score applicants consistently across HR teams, universities, and interviewers—without touching core code.
                 </Text>
                 <Group gap="md" justify="center" mt="lg">
-                    <Button component={Link} to="/admin-register" size="lg" radius="md" py={8} px={32}>
-                    Create workspace
+                    {!loading && isAuthenticated && user ? (
+                    <Button size="lg" radius="md" py={8} px={32} onClick={() => navigate(dashboardPath)}>
+                        Go to my Dashboard
                     </Button>
-                    <Button
-                    component={Link}
-                    to="/candidate-register"
-                    size="lg"
-                    radius="md"
-                    variant="light"
-                    py={8}
-                    px={32}
-                    >
-                    Apply as candidate
-                    </Button>
+                    ) : (
+                    <>
+                        <Button component={Link} to="/admin-register" size="lg" radius="md" py={8} px={32}>
+                        Create workspace
+                        </Button>
+                        <Button
+                        component={Link}
+                        to="/candidate-register"
+                        size="lg"
+                        radius="md"
+                        variant="light"
+                        py={8}
+                        px={32}
+                        >
+                        Apply as candidate
+                        </Button>
+                    </>
+                    )}
                 </Group>
                 </Stack>
             </Stack>
             </Container>
+
 
             <Divider />
 
@@ -225,16 +256,25 @@ const LandingPage = () => {
                     Create a workspace to design custom evaluation templates and manage candidate scoring across your organization.
                 </Text>
                 <Group gap="md" justify="center" mt="md">
-                    <Button component={Link} to="/admin-register" size="lg" radius="md">
-                    Create admin workspace
+                    {!loading && isAuthenticated && user ? (
+                    <Button size="lg" radius="md" onClick={() => navigate(dashboardPath)}>
+                        Go to my Dashboard
                     </Button>
-                    <Button component={Link} to="/login" size="lg" radius="md" variant="light">
-                    Sign in
-                    </Button>
+                    ) : (
+                    <>
+                        <Button component={Link} to="/admin-register" size="lg" radius="md">
+                        Create admin workspace
+                        </Button>
+                        <Button component={Link} to="/login" size="lg" radius="md" variant="light">
+                        Sign in
+                        </Button>
+                    </>
+                    )}
                 </Group>
                 </Stack>
             </Container>
             </Box>
+
         </Box>
     );
 };

@@ -8,7 +8,7 @@ type AuthContextType = {
     loading: boolean;
     isAuthenticated: boolean;
     logout: () => Promise<void>;
-    login: (credentials: LoginDTO) => Promise<void>;
+    login: (credentials: LoginDTO) => Promise<UserProfileDTO>;
     registerAdmin: (data: RegisterAdminDTO) => Promise<void>;
     registerCandidate: (data: RegisterCandidateDTO) => Promise<void>;
 }
@@ -34,16 +34,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         window.location.replace('/');
     }
 
-    const login = async (credentials: LoginDTO) => {
-        try {
-            await AuthService.login(credentials);
-            const userProfile: UserProfileDTO = await AuthService.getProfile();
-            setUser(userProfile);
-            setIsAuthenticated(true);
-            toast('Successfully logged in')
-        } catch {
-            toast('Failed to login')
-        }
+    const login = async (credentials: LoginDTO): Promise<UserProfileDTO> => {
+        await AuthService.login(credentials);
+        const userProfile: UserProfileDTO = await AuthService.getProfile();
+        setUser(userProfile);
+        setIsAuthenticated(true);
+        toast('Successfully logged in');
+        return userProfile;
     }
 
     const registerAdmin = async (data: RegisterAdminDTO) => {

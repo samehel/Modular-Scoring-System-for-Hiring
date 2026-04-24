@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Anchor,
   Box,
@@ -15,11 +15,21 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 import { LoginDTO } from '../../models/auth.types';
 import { useForm } from '@mantine/form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const LoginPage = () => {
-  const { login } = useAuth();
+  const { login, isAuthenticated, user, loading } = useAuth();
   const [submitting, setSubmitting] = useState(false);
+  const navigate = useNavigate();
+
+  // Redirect away if already logged in
+  useEffect(() => {
+    if (!loading && isAuthenticated && user) {
+      navigate(user.user_type === 'ADMIN' ? '/admin/dashboard' : '/candidate/history', { replace: true });
+    }
+  }, [isAuthenticated, user, loading, navigate]);
+
   const form = useForm<LoginDTO>({
     initialValues: {
       email: '',
@@ -34,7 +44,10 @@ const LoginPage = () => {
   const handleSubmit = form.onSubmit(async (values) => {
     setSubmitting(true);
     try {
-      await login(values);
+      const profile = await login(values);
+      navigate(profile.user_type === 'ADMIN' ? '/admin/dashboard' : '/candidate/history', { replace: true });
+    } catch {
+      toast('Invalid email or password');
     } finally {
       setSubmitting(false);
     }
