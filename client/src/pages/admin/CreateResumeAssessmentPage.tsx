@@ -10,6 +10,7 @@ import {
   Divider,
   Group,
   Loader,
+  Progress,
   Stack,
   Text,
   Textarea,
@@ -48,6 +49,10 @@ export default function CreateResumeAssessmentPage() {
   const assessmentLink = vm.generatedLink
     ? `${window.location.origin}/assessment/${vm.generatedLink.token}`
     : null;
+
+  const totalWeight = vm.criteria.reduce((sum, c) => sum + c.weight, 0);
+  const remainingWeight = Math.max(0, parseFloat((1 - totalWeight).toFixed(2)));
+  const weightPct = Math.min(100, Math.round(totalWeight * 100));
 
   return (
     <Box style={{ minHeight: '100vh', background: 'var(--mantine-color-gray-0)' }}>
@@ -122,8 +127,19 @@ export default function CreateResumeAssessmentPage() {
           {/* Step 2: Criteria */}
           {vm.assessment && (
             <Stack gap="md">
-              <Title order={4}>2. Scoring Criteria</Title>
-              <CriterionForm onAdd={vm.addCriterion} loading={vm.loading} />
+              <Group justify="space-between" align="center">
+                <Title order={4}>2. Scoring Criteria</Title>
+                <Text size="sm" c={weightPct >= 100 ? 'red.7' : weightPct >= 80 ? 'orange.7' : 'dimmed'} fw={500}>
+                  {weightPct}% of 100% allocated
+                </Text>
+              </Group>
+              <Progress
+                value={weightPct}
+                color={weightPct >= 100 ? 'red' : weightPct >= 80 ? 'orange' : 'blue'}
+                size="sm"
+                radius="xl"
+              />
+              <CriterionForm onAdd={vm.addCriterion} loading={vm.loading} remainingWeight={remainingWeight} />
               <CriterionList criteria={vm.criteria} />
             </Stack>
           )}

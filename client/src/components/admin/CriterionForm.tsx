@@ -2,12 +2,14 @@
 import { useState } from 'react';
 import {
   ActionIcon,
+  Alert,
   Badge,
   Button,
   Divider,
   Group,
   NumberInput,
   Paper,
+  RingProgress,
   Select,
   Stack,
   Text,
@@ -20,6 +22,8 @@ import { AddCriterionPayload, CriterionDTO } from '../../models/assessment.types
 interface Props {
   onAdd: (criterion: AddCriterionPayload) => void;
   loading: boolean;
+  /** Remaining allocatable weight (0–1). Form is locked when this is 0. */
+  remainingWeight: number;
 }
 
 const CRITERION_TYPES: { value: CriterionDTO['type']; label: string; description: string }[] = [
@@ -259,7 +263,7 @@ function SkillsMatchRules({
 
 // ── Main component ────────────────────────────────────────────────────────────
 
-export default function CriterionForm({ onAdd, loading }: Props) {
+export default function CriterionForm({ onAdd, loading, remainingWeight }: Props) {
   const [name, setName] = useState('');
   const [type, setType] = useState<CriterionDTO['type']>('KEYWORD_MATCH');
   const [weight, setWeight] = useState<number>(0.3);
@@ -289,6 +293,8 @@ export default function CriterionForm({ onAdd, loading }: Props) {
 
   const isValid = (): boolean => {
     if (!name.trim()) return false;
+    if (remainingWeight <= 0) return false;
+    if (weight > remainingWeight) return false;
     switch (type) {
       case 'KEYWORD_MATCH': return keywords.length > 0;
       case 'YEARS_EXPERIENCE': return minYears >= 0;
@@ -313,10 +319,37 @@ export default function CriterionForm({ onAdd, loading }: Props) {
 
   const selectedTypeMeta = CRITERION_TYPES.find((t) => t.value === type);
 
+  const weightPct = Math.round((1 - remainingWeight) * 100);
+  const isLocked = remainingWeight <= 0;
+
   return (
     <Paper withBorder p="md" radius="md">
       <Stack gap="md">
-        <Title order={5}>Add Scoring Criterion</Title>
+        <Group justify="space-between" align="center">
+          <Title order={5}>Add Scoring Criterion</Title>
+          <Group gap="xs" align="center">
+            <RingProgress
+              size={44}
+              thickness={4}
+              roundCaps
+              sections={[{ value: weightPct, color: weightPct >= 100 ? 'red' : weightPct >= 80 ? 'orange' : 'blue' }]}
+            />
+            <Stack gap={0}>
+              <Text size="xs" fw={600} c={weightPct >= 100 ? 'red' : 'dimmed'}>
+                {weightPct}% allocated
+              </Text>
+              <Text size="xs" c="dimmed">
+                {Math.round(remainingWeight * 100)}% remaining
+              </Text>
+            </Stack>
+          </Group>
+        </Group>
+
+        {isLocked && (
+          <Alert color="red" title="Weight limit reached" variant="light">
+            Total criterion weight is already at 100%. Remove or reduce an existing criterion before adding a new one.
+          </Alert>
+        )}
 
         {/* Name */}
         <TextInput
@@ -344,15 +377,17 @@ export default function CriterionForm({ onAdd, loading }: Props) {
         {/* Weight */}
         <NumberInput
           id="criterion-weight"
-          label="Weight"
-          description="How much this criterion contributes to the total score (0 = 0%, 1 = 100%)"
+          label={`Weight (max ${Math.round(remainingWeight * 100)}% remaining)`}
+          description="How much this criterion contributes to the total score"
           value={weight}
-          onChange={(v) => setWeight(Number(v))}
+          onChange={(v) => setWeight(Math.min(Number(v), remainingWeight))}
           min={0}
-          max={1}
+          max={parseFloat(remainingWeight.toFixed(2))}
           step={0.05}
           decimalScale={2}
           suffix=" of total"
+          disabled={isLocked}
+          error={weight > remainingWeight ? `Exceeds remaining weight (${Math.round(remainingWeight * 100)}%)` : null}
         />
 
         <Divider label="Criterion Rules" labelPosition="left" />
