@@ -24,11 +24,24 @@ env = environ.Env()
 environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 # MongoEngine connection
-connect(
-    db=env("DB_NAME"),
-    host=f"mongodb+srv://{env('DB_USER')}:{env('DB_PASSWORD')}@{env('DB_ENHOST')}/{env('DB_NAME')}?retryWrites=true&w=majority",
-    alias="default"
-)
+# Supports both local MongoDB (localhost) and MongoDB Atlas (SRV)
+_db_host = env("DB_ENHOST", default="localhost")
+_db_name = env("DB_NAME")
+_db_user = env("DB_USER", default="")
+_db_pass = env("DB_PASSWORD", default="")
+
+if _db_host in ("localhost", "127.0.0.1"):
+    # ── Local MongoDB ────────────────────────────────────────────────────────
+    _mongo_uri = f"mongodb://{_db_host}:27017/{_db_name}"
+else:
+    # ── MongoDB Atlas (SRV) ──────────────────────────────────────────────────
+    _mongo_uri = (
+        f"mongodb+srv://{_db_user}:{_db_pass}"
+        f"@{_db_host}/{_db_name}?retryWrites=true&w=majority"
+    )
+
+connect(db=_db_name, host=_mongo_uri, alias="default")
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
