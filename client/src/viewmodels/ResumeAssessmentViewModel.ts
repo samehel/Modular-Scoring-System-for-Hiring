@@ -71,6 +71,24 @@ export function useResumeAssessmentViewModel() {
     [assessment],
   );
 
+  /** Delete a criterion by ID (persists to backend). */
+  const deleteCriterion = useCallback(
+    async (criterionId: string) => {
+      if (!assessment) return;
+      setLoading(true);
+      setError(null);
+      try {
+        const remaining = await AssessmentService.deleteCriterion(assessment.id, criterionId);
+        setCriteria(remaining);
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : 'Failed to delete criterion');
+      } finally {
+        setLoading(false);
+      }
+    },
+    [assessment],
+  );
+
   /** Generate and store the shareable assessment link. */
   const generateLink = useCallback(async () => {
     if (!assessment) { setError('Create an assessment first'); return; }
@@ -109,6 +127,7 @@ export function useResumeAssessmentViewModel() {
     createAssessment,
     loadAssessment,
     addCriterion,
+    deleteCriterion,
     generateLink,
     reset,
   };

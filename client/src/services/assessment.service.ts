@@ -6,6 +6,7 @@ import {
   AssessmentLinkDTO,
   AssessmentResultDTO,
   CreateResumeAssessmentPayload,
+  CriterionDTO,
 } from '../models/assessment.types';
 
 class AssessmentService {
@@ -29,6 +30,17 @@ class AssessmentService {
       criterion,
     );
     return res.data.assessment as AssessmentDTO;
+  }
+
+  /** Delete a single criterion from an assessment. Returns the remaining criteria. */
+  static async deleteCriterion(
+    assessmentId: string,
+    criterionId: string,
+  ): Promise<CriterionDTO[]> {
+    const res = await api.delete(
+      `/api/admin/assessments/${assessmentId}/criteria/${criterionId}/delete/`,
+    );
+    return res.data.criteria as CriterionDTO[];
   }
 
   /** Generate a shareable public link for an assessment. */

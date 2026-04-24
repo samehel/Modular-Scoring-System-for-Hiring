@@ -163,7 +163,7 @@ export default function CreateResumeAssessmentPage() {
                 radius="xl"
               />
               <CriterionForm onAdd={vm.addCriterion} loading={vm.loading} remainingWeight={remainingWeight} />
-              <CriterionList criteria={vm.criteria} />
+              <CriterionList criteria={vm.criteria} onDelete={vm.deleteCriterion} deleting={vm.loading} />
             </Stack>
           )}
 
