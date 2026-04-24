@@ -12,7 +12,7 @@ class DeleteCriterionView(APIView):
 
     def delete(self, request, assessment_id, criterion_id):
         try:
-            admin_id = request.user_data.get("user_id")
+            admin_id = str(request.user_data.id)
             use_case = DeleteCriterionUseCase()
             result = use_case.execute(assessment_id, criterion_id, admin_id)
             return Response(

@@ -7,7 +7,7 @@ class DeleteCriterionUseCase:
 
     def execute(self, assessment_id: str, criterion_id: str, admin_id: str) -> dict:
         try:
-            assessment = Assessment.objects.get(id=ObjectId(assessment_id))
+            assessment = Assessment.objects.get(id=assessment_id)
         except Assessment.DoesNotExist:
             raise ValueError("Assessment not found")
 
@@ -40,3 +40,4 @@ class DeleteCriterionUseCase:
                 for c in remaining
             ],
         }
+
